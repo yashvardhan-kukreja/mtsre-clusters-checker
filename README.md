@@ -25,9 +25,17 @@ make run
 make clean
 ```
 
+## Release and Deployment
+
+The deployment of this tool is GitOps-driven over the internal Red Hat's app-interface pipelines.
+
+Those pipelines recognise a change under `./deploy/cronjob-template.yaml` and accordingly, re-deploy the cronjob.
+
+Hence, to cut a new release against this whole process, raise a PR to update the CronJob's `image` with the latest image pushed to Quay registry corresponding to `quay.io/mtsre/mtsre-clusters-checker`.
+
 ## Contributions
 
-Feel free to suggest anything by raising an Issue on this repository, getting a clearance and proceeding to work on its associated PR.
+Feel free to suggest anything by raising an Issue on this repository, getting a clearance from the maintainers and proceeding to work on its associated PR.
 
 ## Future? 
 

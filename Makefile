@@ -21,6 +21,9 @@ clean: ## Clean this directory
 build: tidy ## Build binaries
 	@CGO_ENABLED=0 go build -a -o bin/mtsre-clusters-checker cmd/checker.go
 
+run: build
+	@bin/mtsre-clusters-checker
+
 tidy:
 	@go mod tidy
 	@go mod verify

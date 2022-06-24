@@ -1,0 +1,57 @@
+
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: addons-secrets
+objects:
+- apiVersion: batch/v1
+  kind: CronJob
+  metadata:
+    name: mtsre-clusters-checker
+  spec:
+    concurrencyPolicy: Forbid
+    failedJobsHistoryLimit: 1
+    schedule: "0 */6 * * *"
+    jobTemplate:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: mtsre-clusters-checker
+              image: quay.io/mtsre/mtsre-clusters-checker:latest
+              imagePullPolicy: Always
+              env:
+              - name: SLACK_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: mtsre-clusters-checker-slack-token
+                    key: oauth-token
+                    optional: false
+              - name: OCM_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: mtsre-clusters-checker-slack-token
+                    key: oauth-token
+                    optional: false
+            restartPolicy: OnFailure
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    annotations:
+      vault-secret-version: '1'
+    name: mtsre-clusters-checker-slack-token
+  stringData:
+    oauth-token: ${MTSRE_CLUSTERS_CHECKER_SLACK_OAUTH_TOKEN}
+  type: Opaque
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    annotations:
+      vault-secret-version: '2'
+    name: mtsre-clusters-checker-ocm-token
+  stringData:
+    token: ${MTSRE_CLUSTERS_CHECKER_OCM_TOKEN}
+  type: Opaque
+parameters:
+- name: MTSRE_CLUSTERS_CHECKER_SLACK_OAUTH_TOKEN
+- name: MTSRE_CLUSTERS_CHECKER_OCM_TOKEN

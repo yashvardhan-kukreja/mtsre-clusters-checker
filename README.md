@@ -1,21 +1,28 @@
-# MTSRE Clusters Checker
+# OSD Clusters Checker
 
-A friendly helper which scans for MTSRE clusters and sees if anyone of them is worth cleaning up or not to save some bucks :)
+A friendly helper which scans for OSD clusters and sees if anyone of them is worth cleaning up or not to save some bucks :)
 
 ## Execution
 
 ### Prerequisities
 
-The following credentials are required to run the MTSRE Clusters Checker:
-* `OCM_TOKEN`: OCM Token which allows you to read the MTSRE clusters.
-* `SLACK_TOKEN`: Slack Token which is authorized to post message on MTSRE's Slack handle.
+The following credentials are required to run the OSD Clusters Checker:
+* `OCM_TOKEN`: OCM Token which allows you to read your organization's OSD clusters via OCM API.
+* `SLACK_TOKEN`: Slack Token which is authorized to post message on your Slack handle.
 
-### Running the MTSRE Clusters Checker
+### Running the Clusters Checker
 
 * Have Go 1.17 on your host.
-* Run the following:
+* Build the clusters-checker:
 ```sh
-make run
+make build
+```
+* Run it:
+```sh
+export OCM_TOKEN="foo"
+export SLACK_TOKEN="bar"
+
+bin/clusters-checker scan --envs-and-org-ids production:your-org-id-in-production --envs-and-org-ids staging:your-org-id-in-stagubg --envs-and-org-ids integration:your-org-id-in-integration  --slack-channel-id channel-id
 ```
 
 ### Cleanup
@@ -39,4 +46,5 @@ Feel free to suggest anything by raising an Issue on this repository, getting a 
 
 ## Future? 
 
-Carve this into a CLI which can be used by any team in the future to perform the same kind of checks for the Openshift clusters belonging to their org.
+- [x] Carve this into a CLI which can be used by any team in the future to perform the same kind of checks for the Openshift clusters belonging to their org.
+- [ ] Add support for skip lists to specify the clusters-checker to ignore certain clusters while performing the scan.

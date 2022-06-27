@@ -19,7 +19,7 @@ clean: ## Clean this directory
 	@rm -fr $(CACHE) $(GOBIN) bin/* dist/ || true
 
 build: tidy ## Build binaries
-	@CGO_ENABLED=0 go build -a -o bin/mtsre-clusters-checker cmd/checker.go
+	@CGO_ENABLED=0 go build -a -o bin/clusters-checker main.go
 
 run: build
 	@bin/mtsre-clusters-checker

@@ -17,27 +17,22 @@ type ClusterCheckupResult struct {
 }
 
 type Environment struct {
-	Alias      string
-	Url        string
-	MtSreOrgId string
+	Alias string
+	Url   string
+	OrgId string
 }
 
 var (
 	Production Environment = Environment{
-		Alias:      "production",
-		Url:        "https://api.openshift.com",
-		MtSreOrgId: "1u1wd0UgiYs6ia6RtNedCgq5bB2",
+		Alias: "production",
+		Url:   "https://api.openshift.com",
 	}
 	Staging Environment = Environment{
-		Alias:      "staging",
-		Url:        "https://api.stage.openshift.com",
-		MtSreOrgId: "1u1wPVuTr2m2yyP59aG1qQlvA3D",
+		Alias: "staging",
+		Url:   "https://api.stage.openshift.com",
 	}
 	Integration Environment = Environment{
-		Alias:      "integration",
-		Url:        "https://api.integration.openshift.com",
-		MtSreOrgId: "1vZurUnxOx3tHqa6ecj9OWAYy6P",
+		Alias: "integration",
+		Url:   "https://api.integration.openshift.com",
 	}
 )
-
-const MTSRE_INFO_CHANNEL_ID = "C01V4S8GXPD"

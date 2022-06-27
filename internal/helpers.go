@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"reflect"
 	"strings"
 	"sync"
@@ -122,12 +121,12 @@ func fetchAccountDetails(connection *sdk.Connection, accountId string) accountsv
 }
 
 func GenerateNotificationMessage(clusterInstances []apisv1.ClusterInstance, env apisv1.Environment) string {
-	message := fmt.Sprintf("MTSRE Clusters getting checked for any stale clusters in *%s* environment...\n", env.Alias)
+	message := fmt.Sprintf("Clusters getting checked for any stale clusters in *%s* environment...\n", env.Alias)
 	if len(clusterInstances) == 0 {
-		message += "No MTSRE clusters were found to be older than 24h :D"
+		message += "No clusters were found to be older than 24h :D"
 		return message
 	}
-	message += "The following MTSRE active clusters were found to be older than 24h. Please remove them if they aren't required anymore:\n"
+	message += "The following active clusters were found to be older than 24h. Please remove them if they aren't required anymore:\n"
 	for _, clusterInstance := range clusterInstances {
 		message += fmt.Sprintf(`
 *Cluster*: %s
@@ -140,7 +139,7 @@ func GenerateNotificationMessage(clusterInstances []apisv1.ClusterInstance, env 
 	return strings.TrimSuffix(message, "\n")
 }
 
-func NotifyOnSlack(channel, message string) error {
+func NotifyOnSlack(token, channel, message string) error {
 	data := map[string]string{"channel": channel, "text": message, "parse": "full"}
 	jsonData, err := json.Marshal(data)
 	if err != nil {
@@ -153,7 +152,7 @@ func NotifyOnSlack(channel, message string) error {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept-Charset", "utf-8")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", os.Getenv("SLACK_TOKEN")))
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -175,37 +174,37 @@ func NotifyOnSlack(channel, message string) error {
 }
 
 func PerformClustersCheckup(ocmToken string, env apisv1.Environment) apisv1.ClusterCheckupResult {
-	log.Printf("Performing MtSre clusters checkup for %s...", env.Alias)
+	log.Printf("Performing clusters checkup for %s...", env.Alias)
 
 	config, err := OcmLogin(ocmToken, string(env.Url))
 	if err != nil {
 		return apisv1.ClusterCheckupResult{
 			Success: "",
-			Failure: fmt.Sprintf("failed to perform MTSRE Clusters Checkup for the environment %s", env.Alias),
+			Failure: fmt.Sprintf("failed to perform Clusters Checkup for the environment %s", env.Alias),
 			Error:   fmt.Errorf("failed to login into %s with the provided ocm token: %w", env.Url, err),
 		}
 	}
-	log.Default().Printf("Config. loaded. Environment: %s, Organization ID to be checked for: %s", env, env.MtSreOrgId)
+	log.Default().Printf("Config. loaded. Environment: %s, Organization ID to be checked for: %s", env, env.OrgId)
 
 	connection, err := ocm.NewConnection().Config(config).Build()
 	if err != nil {
 		return apisv1.ClusterCheckupResult{
 			Success: "",
-			Failure: fmt.Sprintf("failed to perform MTSRE Clusters Checkup for the environment %s", env.Alias),
+			Failure: fmt.Sprintf("failed to perform Clusters Checkup for the environment %s", env.Alias),
 			Error:   fmt.Errorf("failed to establish a connection with OCM CLI: %w", err),
 		}
 	}
 	defer connection.Close()
 
-	staleMTSREClusterInstances, err := FetchStaleClusterInstances(connection, env.MtSreOrgId)
+	staleClusterInstances, err := FetchStaleClusterInstances(connection, env.OrgId)
 	result := apisv1.ClusterCheckupResult{
-		Success: GenerateNotificationMessage(staleMTSREClusterInstances, env),
+		Success: GenerateNotificationMessage(staleClusterInstances, env),
 		Error:   nil,
 	}
 	if err != nil {
-		result.Failure = fmt.Sprintf("Some errors were encountered while fetching the stale mtsre cluster instances: %s", err.Error())
+		result.Failure = fmt.Sprintf("Some errors were encountered while fetching the stale cluster instances: %s", err.Error())
 	}
 
-	log.Default().Printf("Successfully notified about the stale MTSRE %s clusters on #sd-mt-sre-info", env.Alias)
+	log.Default().Printf("Successfully performed the clusters checkup for any stale clusters in %s environment", env.Alias)
 	return result
 }

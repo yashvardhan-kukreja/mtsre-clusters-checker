@@ -19,9 +19,9 @@ RUN make build
 FROM scratch
 
 WORKDIR /
-COPY --from=builder /build/bin/mtsre-clusters-checker /
+COPY --from=builder /build/bin/clusters-checker /
 COPY --from=builder /etc/passwd /etc/passwd
 
 USER "noroot"
 
-ENTRYPOINT ["/mtsre-clusters-checker"]
+ENTRYPOINT ["/clusters-checker"]

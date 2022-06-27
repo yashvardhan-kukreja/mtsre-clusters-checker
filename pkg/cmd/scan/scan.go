@@ -56,7 +56,7 @@ func NewCommand() *cobra.Command {
 func runE(flags *flagpole) error {
 	ocmToken := flags.OcmToken
 	if ocmToken == "" {
-		log.Fatal("OCM token not found to be provided!")
+		return fmt.Errorf("OCM token not found to be provided")
 	}
 
 	var envs []apisv1.Environment

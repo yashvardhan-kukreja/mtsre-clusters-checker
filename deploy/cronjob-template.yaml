@@ -20,6 +20,16 @@ objects:
             - name: mtsre-clusters-checker
               image: quay.io/mtsre/mtsre-clusters-checker:latest
               imagePullPolicy: Always
+              command: "scan"
+              args:
+              - --envs-and-org-ids
+              - production:${MTSRE_CLUSTERS_CHECKER_PRODUCTION_ORG_ID}
+              - --envs-and-org-ids
+              - staging:${MTSRE_CLUSTERS_CHECKER_STAGING_ORG_ID}
+              - --envs-and-org-ids
+              - integration:${MTSRE_CLUSTERS_CHECKER_INTEGRATION_ORG_ID}
+              --slack-channel-id
+              - ${MTSRE_CLUSTERS_CHECKER_SLACK_CHANNEL_ID}
               env:
               - name: SLACK_TOKEN
                 valueFrom:
@@ -55,3 +65,7 @@ objects:
 parameters:
 - name: MTSRE_CLUSTERS_CHECKER_SLACK_OAUTH_TOKEN
 - name: MTSRE_CLUSTERS_CHECKER_OCM_TOKEN
+- name: MTSRE_CLUSTERS_CHECKER_PRODUCTION_ORG_ID
+- name: MTSRE_CLUSTERS_CHECKER_STAGING_ORG_ID
+- name: MTSRE_CLUSTERS_CHECKER_INTEGRATION_ORG_ID
+- name: MTSRE_CLUSTERS_CHECKER_SLACK_CHANNEL_ID

@@ -7,7 +7,10 @@ require (
 	github.com/openshift-online/ocm-sdk-go v0.1.274
 )
 
-require github.com/golang-jwt/jwt/v4 v4.4.1
+require (
+	github.com/golang-jwt/jwt/v4 v4.4.1
+	github.com/spf13/cobra v1.5.0
+)
 
 require (
 	github.com/aymerick/douceur v0.2.0 // indirect
@@ -19,6 +22,7 @@ require (
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect

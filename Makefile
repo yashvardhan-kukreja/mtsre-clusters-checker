@@ -6,6 +6,7 @@ SHELL := /bin/bash
 
 REPO := quay.io/mtsre/mtsre-clusters-checker
 TAG := $(shell git rev-parse --short HEAD)
+RELEASE_TAG := $(shell git tag --points-at HEAD)
 
 # Set the GOBIN environment variable so that dependencies will be installed
 # always in the same place, regardless of the value of GOPATH
@@ -20,6 +21,10 @@ clean: ## Clean this directory
 
 build: tidy ## Build binaries
 	@CGO_ENABLED=0 go build -a -o bin/clusters-checker main.go
+
+release: 
+	$(eval TAG := $(shell git tag --points-at HEAD))
+	@make docker-build docker-push
 
 run: build
 	@bin/mtsre-clusters-checker

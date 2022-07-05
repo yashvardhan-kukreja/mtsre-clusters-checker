@@ -18,54 +18,56 @@ objects:
           spec:
             containers:
             - name: mtsre-clusters-checker
-              image: quay.io/mtsre/mtsre-clusters-checker:latest
+              image: quay.io/mtsre/mtsre-clusters-checker:${IMAGE_TAG}
               imagePullPolicy: Always
               command: "scan"
               args:
               - --envs-and-org-ids
-              - production:${MTSRE_CLUSTERS_CHECKER_PRODUCTION_ORG_ID}
+              - production:$(PRODUCTION_ORGANIZATION_ID)
               - --envs-and-org-ids
-              - staging:${MTSRE_CLUSTERS_CHECKER_STAGING_ORG_ID}
+              - staging:$(STAGING_ORGANIZATION_ID)
               - --envs-and-org-ids
-              - integration:${MTSRE_CLUSTERS_CHECKER_INTEGRATION_ORG_ID}
+              - integration:$(INTEGRATION_ORGANIZATION_ID)
               --slack-channel-id
-              - ${MTSRE_CLUSTERS_CHECKER_SLACK_CHANNEL_ID}
+              - $(SLACK_CHANNEL_ID)
+              ## All the Secrets resources coming securely from app-interface - <app-interface-repo>/data/services/addons/cicd/ci-ext/saas-mtsre-workloads.yaml
               env:
+              - name: PRODUCTION_ORGANIZATION_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: mtsre-clusters-checker-org-ids
+                    key: production-organization-id
+                    optional: true
+              - name: STAGING_ORGANIZATION_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: mtsre-clusters-checker-org-ids
+                    key: staging-organization-id
+                    optional: true
+              - name: INTEGRATION_ORGANIZATION_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: mtsre-clusters-checker-org-ids
+                    key: integration-organization-id
+                    optional: true
+              - name: SLACK_CHANNEL_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: mtsre-clusters-checker-slack-creds
+                    key: sd-mt-sre-info-channel-id
+                    optional: false
               - name: SLACK_TOKEN
                 valueFrom:
                   secretKeyRef:
-                    name: mtsre-clusters-checker-slack-token
+                    name: mtsre-clusters-checker-slack-creds
                     key: oauth-token
                     optional: false
               - name: OCM_TOKEN
                 valueFrom:
                   secretKeyRef:
-                    name: mtsre-clusters-checker-slack-token
-                    key: oauth-token
+                    name: mtsre-clusters-checker-ocm-creds
+                    key: token
                     optional: false
             restartPolicy: OnFailure
-- apiVersion: v1
-  kind: Secret
-  metadata:
-    annotations:
-      vault-secret-version: '1'
-    name: mtsre-clusters-checker-slack-token
-  stringData:
-    oauth-token: ${MTSRE_CLUSTERS_CHECKER_SLACK_OAUTH_TOKEN}
-  type: Opaque
-- apiVersion: v1
-  kind: Secret
-  metadata:
-    annotations:
-      vault-secret-version: '2'
-    name: mtsre-clusters-checker-ocm-token
-  stringData:
-    token: ${MTSRE_CLUSTERS_CHECKER_OCM_TOKEN}
-  type: Opaque
 parameters:
-- name: MTSRE_CLUSTERS_CHECKER_SLACK_OAUTH_TOKEN
-- name: MTSRE_CLUSTERS_CHECKER_OCM_TOKEN
-- name: MTSRE_CLUSTERS_CHECKER_PRODUCTION_ORG_ID
-- name: MTSRE_CLUSTERS_CHECKER_STAGING_ORG_ID
-- name: MTSRE_CLUSTERS_CHECKER_INTEGRATION_ORG_ID
-- name: MTSRE_CLUSTERS_CHECKER_SLACK_CHANNEL_ID
+- name: IMAGE_TAG

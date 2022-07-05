@@ -22,14 +22,10 @@ objects:
               imagePullPolicy: Always
               command: "scan"
               args:
-              - --envs-and-org-ids
-              - production:$(PRODUCTION_ORGANIZATION_ID)
-              - --envs-and-org-ids
-              - staging:$(STAGING_ORGANIZATION_ID)
-              - --envs-and-org-ids
-              - integration:$(INTEGRATION_ORGANIZATION_ID)
-              --slack-channel-id
-              - $(SLACK_CHANNEL_ID)
+              - --envs-and-org-ids=production:$PRODUCTION_ORGANIZATION_ID
+              - --envs-and-org-ids=staging:$STAGING_ORGANIZATION_ID
+              - --envs-and-org-ids=integration:$INTEGRATION_ORGANIZATION_ID
+              - --slack-channel-id=$SLACK_CHANNEL_ID
               ## All the Secrets resources coming securely from app-interface - <app-interface-repo>/data/services/addons/cicd/ci-ext/saas-mtsre-workloads.yaml
               env:
               - name: PRODUCTION_ORGANIZATION_ID
